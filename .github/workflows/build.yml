@@ -11,22 +11,26 @@ jobs:
     runs-on: windows-latest
 
     steps:
-    # リポジトリをチェックアウト
+    # 1. リポジトリチェックアウト
     - name: Checkout repository
       uses: actions/checkout@v3
 
-    # MSBuild コマンドが使えるように設定
+    # 2. MSBuild が使えるように
     - name: Setup MSBuild path
       uses: microsoft/setup-msbuild@v1
 
-    # .NET Framework 4.5 Developer Pack をインストール
-    - name: Install .NET Framework 4.5 Developer Pack
-      run: choco install netfx-devpack45 -y
+    # 3. ターゲットフレームワーク書き換え (4.5 → 4.7.2)
+    - name: Retarget csproj to .NET Framework 4.7.2
+      shell: pwsh
+      run: |
+        $proj = 'DotNetLibrary/DotNetLibrary.csproj'
+        (Get-Content $proj) -replace '<TargetFrameworkVersion>v4\.5</TargetFrameworkVersion>', '<TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>' | 
+          Set-Content $proj
 
-    # NuGet パッケージを復元
+    # 4. NuGet パッケージ復元
     - name: Restore NuGet packages
       run: nuget restore DotNetLibrary.sln
 
-    # MSBuild でソリューションをビルド
+    # 5. MSBuild でビルド
     - name: Build with MSBuild
       run: msbuild DotNetLibrary.sln /p:Configuration=Release /p:Platform="Any CPU"
