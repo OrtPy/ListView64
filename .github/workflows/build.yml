@@ -11,13 +11,22 @@ jobs:
     runs-on: windows-latest
 
     steps:
-    - uses: actions/checkout@v3
+    # リポジトリをチェックアウト
+    - name: Checkout repository
+      uses: actions/checkout@v3
 
-    - name: Set up MSBuild path
+    # MSBuild コマンドが使えるように設定
+    - name: Setup MSBuild path
       uses: microsoft/setup-msbuild@v1
 
+    # .NET Framework 4.5 Developer Pack をインストール
+    - name: Install .NET Framework 4.5 Developer Pack
+      run: choco install netfx-devpack45 -y
+
+    # NuGet パッケージを復元
     - name: Restore NuGet packages
       run: nuget restore DotNetLibrary.sln
 
+    # MSBuild でソリューションをビルド
     - name: Build with MSBuild
       run: msbuild DotNetLibrary.sln /p:Configuration=Release /p:Platform="Any CPU"
