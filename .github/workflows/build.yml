@@ -13,14 +13,11 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    # MSBuild をセットアップ
-    - name: Setup MSBuild path
+    - name: Set up MSBuild path
       uses: microsoft/setup-msbuild@v1
 
-    # NuGet の復元（必要に応じて）
     - name: Restore NuGet packages
-      run: nuget restore DotNetLibrary/DotNetLibrary.sln
+      run: nuget restore DotNetLibrary.sln
 
-    # MSBuild でソリューションをビルド
     - name: Build with MSBuild
-      run: msbuild DotNetLibrary/DotNetLibrary.sln /p:Configuration=Release /p:Platform="Any CPU"
+      run: msbuild DotNetLibrary.sln /p:Configuration=Release /p:Platform="Any CPU"
